@@ -41,7 +41,8 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           CHANGED_FILE="$RUNNER_TEMP/changed-files.txt"
           if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
-            git ls-files > "$CHANGED_FILE"
+            # 手动触发：只编译 bread-compact-wifi 变体
+            echo "main/boards/bread-compact-wifi/config.json" > "$CHANGED_FILE"
           elif [[ "$EVENT_NAME" == "pull_request" ]]; then
             # Checkout is the synthetic merge commit. Compare the PR branch
             # from its merge base, excluding unrelated updates on main.
@@ -89,6 +90,7 @@ jobs:
           BOARD: ${{ matrix.board }}
           VARIANT: ${{ matrix.name }}
           BUILD_OPTIONS_JSON: ${{ toJSON(matrix.ci_build_options) }}
+          XIAOZHI_CUSTOM_WAKE_WORD: "1"
         run: |
           source "$IDF_PATH/export.sh"
           OPTIONS=()
