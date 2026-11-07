@@ -65,12 +65,7 @@ jobs:
           python scripts/build.py --select-changed < "$CHANGED_FILE" > "$RUNNER_TEMP/variants.json"
           # 手动触发时只编译 bread-compact-wifi
           if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
-            python -c "
-import json,sys
-with open('$RUNNER_TEMP/variants.json') as f: v=json.load(f)
-v=[x for x in v if x.get('board')=='bread-compact-wifi' and x.get('name')=='bread-compact-wifi']
-json.dump(v, open('$RUNNER_TEMP/variants.json','w'))
-"
+            python -c "import json; v=json.load(open('$RUNNER_TEMP/variants.json')); v=[x for x in v if x.get('board')=='bread-compact-wifi' and x.get('name')=='bread-compact-wifi']; json.dump(v, open('$RUNNER_TEMP/variants.json','w'))"
           fi
           {
             printf 'variants='
