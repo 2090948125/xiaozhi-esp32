@@ -41,8 +41,7 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           CHANGED_FILE="$RUNNER_TEMP/changed-files.txt"
           if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
-            # 手动触发：只编译 bread-compact-wifi 变体
-            echo "main/boards/bread-compact-wifi/config.json" > "$CHANGED_FILE"
+            git ls-files > "$CHANGED_FILE"
           elif [[ "$EVENT_NAME" == "pull_request" ]]; then
             # Checkout is the synthetic merge commit. Compare the PR branch
             # from its merge base, excluding unrelated updates on main.
@@ -64,6 +63,15 @@ jobs:
 
           # Keep the full manual matrix out of environment variables.
           python scripts/build.py --select-changed < "$CHANGED_FILE" > "$RUNNER_TEMP/variants.json"
+          # 手动触发时只编译 bread-compact-wifi
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            python -c "
+import json,sys
+with open('$RUNNER_TEMP/variants.json') as f: v=json.load(f)
+v=[x for x in v if x.get('board')=='bread-compact-wifi' and x.get('name')=='bread-compact-wifi']
+json.dump(v, open('$RUNNER_TEMP/variants.json','w'))
+"
+          fi
           {
             printf 'variants='
             cat "$RUNNER_TEMP/variants.json"
