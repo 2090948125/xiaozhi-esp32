@@ -1667,6 +1667,7 @@ def build_board(
             sdkconfig_append.append("CONFIG_USE_CUSTOM_WAKE_WORD=y")
             sdkconfig_append.append('CONFIG_CUSTOM_WAKE_WORD="xiao lang"')
             sdkconfig_append.append('CONFIG_CUSTOM_WAKE_WORD_DISPLAY="小狼"')
+            sdkconfig_append.append("CONFIG_SR_MN_CN_MULTINET7_QUANT=y")
             selected_wake_word = "custom:xiao lang"
             validation_symbols = [(syms, name) for syms, name in validation_symbols if name != "--wake-word"]
             validation_symbols.append((["CONFIG_USE_CUSTOM_WAKE_WORD"], "--wake-word"))
