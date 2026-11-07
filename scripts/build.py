@@ -1651,6 +1651,24 @@ def build_board(
             user_options,
         )
         sdkconfig_append = _apply_auto_selects(sdkconfig_append)
+        # 自定义唤醒词（通过环境变量 XIAOZHI_CUSTOM_WAKE_WORD 启用）
+        import os as _os
+        if _os.environ.get("XIAOZHI_CUSTOM_WAKE_WORD"):
+            sdkconfig_append = [x for x in sdkconfig_append if not x.startswith((
+                "CONFIG_USE_ESP_WAKE_WORD",
+                "CONFIG_USE_AFE_WAKE_WORD",
+                "CONFIG_USE_CUSTOM_WAKE_WORD",
+                "CONFIG_WAKE_WORD_DISABLED",
+                "CONFIG_SR_WN_",
+            ))]
+            sdkconfig_append.append("CONFIG_WAKE_WORD_DISABLED=n")
+            sdkconfig_append.append("CONFIG_USE_ESP_WAKE_WORD=n")
+            sdkconfig_append.append("CONFIG_USE_AFE_WAKE_WORD=n")
+            sdkconfig_append.append("CONFIG_USE_CUSTOM_WAKE_WORD=y")
+            sdkconfig_append.append('CONFIG_CUSTOM_WAKE_WORD="xiao lang"')
+            sdkconfig_append.append('CONFIG_CUSTOM_WAKE_WORD_DISPLAY="小狼"')
+            selected_wake_word = "custom:xiao lang"
+
 
         print("-" * 80)
         print(f"name: {final_name}")
